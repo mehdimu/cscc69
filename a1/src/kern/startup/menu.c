@@ -65,7 +65,7 @@ getinterval(time_t s1, uint32_t ns1, time_t s2, uint32_t ns2,
 
 ////////////////////////////////////////////////////////////
 //
-// Command menu functions 
+// Command menu functions
 
 /* demke: new routines to copy args for safe passing to child thread, and
  * to free the memory when the args are no longer needed
@@ -88,14 +88,14 @@ copy_args(int nargs, char **args)
 {
 	char **the_copy;
 	int i;
-	
+
 	the_copy = (char **)kmalloc(nargs * sizeof(char *));
 	if (!the_copy) {
 		kprintf("Could not allocate memory for copy of args");
 		return NULL;
 	}
 	for (i=0; i < nargs; i++) {
-		the_copy[i] = kstrdup(args[i]);	
+		the_copy[i] = kstrdup(args[i]);
 		if (!the_copy[i]) {
 			kprintf("Could not allocate memory for copy of argument %d\n",i);
 			/* unwind existing allocations */
@@ -112,12 +112,12 @@ copy_args(int nargs, char **args)
  * Function for a thread that runs an arbitrary userlevel program by
  * name.
  *
- * Note: this cannot pass arguments to the program. You may wish to 
+ * Note: this cannot pass arguments to the program. You may wish to
  * change it so it can, because that will make testing much easier
  * in the future.
  *
  * It copies the program name because runprogram destroys the copy
- * it gets by passing it to vfs_open(). 
+ * it gets by passing it to vfs_open().
  */
 static
 void
@@ -139,9 +139,10 @@ cmd_progthread(void *ptr, unsigned long nargs)
 
 	strcpy(progname, args[0]);
 	strcpy(progname2,args[0]); /* demke: make extra copy for runprogram */
+
+	result = runprogram(progname2, args, nargs);
 	free_args(nargs, args);
 
-	result = runprogram(progname2);
 	if (result) {
 		kprintf("Running program %s failed: %s\n", progname,
 			strerror(result));
@@ -186,7 +187,7 @@ common_prog(int nargs, char **args)
 	}
 
 	/* demke: and now call thread_fork with the copy */
-	
+
 	result = thread_fork(args_copy[0] /* thread name */,
 			cmd_progthread /* thread function */,
 			args_copy /* thread arg */, nargs /* thread arg */,
@@ -253,9 +254,9 @@ cmd_dbflags(int nargs, char **args) {
 		dbflags_print();
 		return 0;
     }
-    if (nargs > 2 && 
+    if (nargs > 2 &&
         (strcmp(args[1], "+") == 0 || strcmp(args[1], "-") == 0)) {
-	
+
         // Get flags
         for (n = 2; n < nargs; n++) {
             for (m = 0; strcmp(flag_name[m], "/0") != 0; m++) {
@@ -266,18 +267,18 @@ cmd_dbflags(int nargs, char **args) {
             }
         }
 
-        if (strcmp(args[1], "+") == 0) 
+        if (strcmp(args[1], "+") == 0)
 			dbflags = dbflags | mask;
-        else 
+        else
 			dbflags = dbflags & ~mask;
 
 		dbflags_print();
         return 0;
     }
-	
+
     // Usage not recognized, so print error and exit.
     kprintf("Usage: dbflags [ + FLAGNAME ... | - FLAGNAME ... | print ]\n\n");
-    return 0;	
+    return 0;
 }
 
 /*
@@ -453,7 +454,7 @@ cmd_unmount(int nargs, char **args)
 }
 
 /*
- * Command to set the "boot fs". 
+ * Command to set the "boot fs".
  *
  * The boot filesystem is the one that pathnames like /bin/sh with
  * leading slashes refer to.
@@ -489,7 +490,7 @@ cmd_kheapstats(int nargs, char **args)
 	(void)args;
 
 	kheap_printstats();
-	
+
 	return 0;
 }
 
@@ -505,7 +506,7 @@ showmenu(const char *name, const char *x[])
 
 	kprintf("\n");
 	kprintf("%s\n", name);
-	
+
 	for (i=ct=0; x[i]; i++) {
 		ct++;
 	}

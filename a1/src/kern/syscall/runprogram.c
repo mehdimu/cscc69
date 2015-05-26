@@ -44,6 +44,7 @@
 #include <vfs.h>
 #include <syscall.h>
 #include <test.h>
+#include <copyinout.h>
 
 /*
  * Load program "progname" and start running it in usermode.
@@ -52,11 +53,15 @@
  * Calls vfs_open on progname and thus may destroy it.
  */
 int
-runprogram(char *progname)
+runprogram(char *progname, char **argv, unsigned long argc)
 {
 	struct vnode *v;
 	vaddr_t entrypoint, stackptr;
 	int result;
+
+	/* add comment here */
+	userptr_t uptarray[argc + 1];
+	userptr_t upt;
 
 	/* Open the file. */
 	result = vfs_open(progname, O_RDONLY, 0, &v);
@@ -85,6 +90,7 @@ runprogram(char *progname)
 		return result;
 	}
 
+
 	/* Done with the file now. */
 	vfs_close(v);
 
@@ -95,10 +101,45 @@ runprogram(char *progname)
 		return result;
 	}
 
+	/* add comment here */
+	size_t argLength;
+	for (unsigned long i = 0; i < argc; i++) {
+		/* add 1 for the null terminator */
+		argLength = strlen(argv[i]) + 1;
+		/* move pointer below and make sure the address is divisible by 4 */
+		stackptr -= argLength;
+		if ( stackptr % 4 != 0) {
+			stackptr -= stackptr % 4;
+		}
+		/* Make sure that the argv[i] has a NULL terminator */
+		argv[i][argLength - 1] = '\0';
+		/* add comment */
+		upt = (userptr_t) stackptr;
+		result = copyout(argv[i], upt, argLength);
+		if (result) {
+			panic("copyout failed\n");
+		}
+		uptarray[i] = upt;
+		kfree(argv[i]); /* Free the memory used by the argv at i */
+	}
+	uptarray[argc] = 0; /* add a NULL terminator to the upt(user pointer) array */
+	kfree(argv); /* Free the memory used by the argument array */
+
+	/* add comment here */
+	size_t uptsize = sizeof(uptarray);
+	stackptr -= uptsize;
+	if ( stackptr % 4 != 0) {
+		stackptr -= stackptr % 4;
+	}
+	upt = (userptr_t) stackptr;
+	result = copyout(uptarray, upt, uptsize);
+	if (result) {
+		panic("copyout failed\n");
+	}
+
 	/* Warp to user mode. */
-	enter_new_process(0 /*argc*/, NULL /*userspace addr of argv*/,
-			  stackptr, entrypoint);
-	
+	enter_new_process(argc, upt, stackptr, entrypoint);
+
 	/* enter_new_process does not return. */
 	panic("enter_new_process returned\n");
 	return EINVAL;
