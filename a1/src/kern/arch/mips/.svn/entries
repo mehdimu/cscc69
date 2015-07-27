@@ -1,0 +1,46 @@
+10
+
+dir
+15
+https://mathlab.utsc.utoronto.ca/svn/cscc69s15/group1/a1/src/kern/arch/mips
+https://mathlab.utsc.utoronto.ca/svn/cscc69s15/group1/a1
+
+
+
+2015-06-04T20:10:26.221712Z
+14
+songkai@UTORONTO.CA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ab4b1e3a-4903-4f20-8845-94f64f6277f7
+
+vm
+dir
+
+include
+dir
+
+locore
+dir
+
+conf
+dir
+
+thread
+dir
+
+syscall
+dir
+
