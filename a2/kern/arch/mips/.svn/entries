@@ -1,0 +1,46 @@
+10
+
+dir
+6
+https://mathlab.utsc.utoronto.ca/svn/cscc69s15/group1/a2/kern/arch/mips
+https://mathlab.utsc.utoronto.ca/svn/cscc69s15/group1/a2
+
+
+
+2015-07-08T17:51:17.680892Z
+5
+mehdimu1@UTORONTO.CA
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+939405c1-9d9c-4475-9815-9ae2a8b3d7f8
+
+vm
+dir
+
+include
+dir
+
+locore
+dir
+
+conf
+dir
+
+thread
+dir
+
+syscall
+dir
+

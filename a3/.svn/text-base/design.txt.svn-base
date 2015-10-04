@@ -1,0 +1,15 @@
+﻿Explain how your open file table design supports the fork semantics.
+        In the file thread.c, we modified the  thread_fork by adding the filetable_fork() which create  a new filetable for the child thread and add all the pointers to file_entries from  the parent's filetable to the child's filetable and increase the number counter on each fileentry.
+
+
+Explain your implementation of sfs_getdirentry.
+        First we get the number of entries from the directory, and the offset. Then we loop from the offset to the number of entries and run the function sfs_readdir. Then it returns the read_result, and check if it is valid so it can update offset  into the buffer and returns. 
+
+
+Explain what changes you needed to make to use wasted inode space to store file data.
+We didn’t get enough time to implement this functionality.
+
+
+Discuss the single biggest challenge you had to address for the assignment
+One of the biggest challenge was making the “badcall” test case pass for dup2 and lseek. With dup2, the kernel will keep crashing after the test was run once. And other times, dup2 will go into a deadlock. Hence, we had to redesign our locking strategy to fix it.
+The “badcall” for lseek was also crashing. The strange thing about it was that it will pass all test-cases but it will crash during one of the tests where it says “Running it on hardware”. After hours of debugging and testing, we could not figure out why the “badcall” test for lseek is not passing all the tests.
